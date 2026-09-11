@@ -1,6 +1,16 @@
+# Thông tin nhóm
+
+**Tên nhóm:** BHCDC
+
+| STT | Họ và tên | Email |
+|---:|---|---|
+| 1 | Lê Phan Việt Cường | 26ai.cuonglpv@vinuni.edu.vn |
+| 2 | Nguyễn Quang Duy | 26ai.duynq@vinuni.edu.vn |
+| 3 | Bùi Gia Chính | 26ai.chinhbg@vinuni.edu.vn |
+| 4 | Nguyễn Vũ Huy | 26ai.huynv5@vinuni.edu.vn |
+| 5 | Vũ Quốc Bảo | 26ai.baovq3@vinuni.edu.vn |
 # 02 — Problem Deep-Dive Report
 
-**Học viên:** Nguyễn Vũ Huy — **MSSV:** 2A202602662 — **Branch:** `2A202602662_NguyenVuHuy`
 **Bài toán chọn:** **Vinhomes — Phân loại & điều hướng phản ánh cư dân trên app Vinhomes Resident** (Card #1 trong [01-problem-scan.md](01-problem-scan.md))
 
 > Lưu ý: Các số liệu về thời gian, khối lượng và chi phí trong báo cáo là **ước tính giả định** phục vụ scoping. Trước khi quyết định đầu tư thật, cần đo baseline từ log ticket của BQL.

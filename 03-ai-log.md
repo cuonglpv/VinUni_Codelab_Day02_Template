@@ -1,7 +1,17 @@
+# Thông tin nhóm
+
+**Tên nhóm:** BHCDC
+
+| STT | Họ và tên | Email |
+|---:|---|---|
+| 1 | Lê Phan Việt Cường | 26ai.cuonglpv@vinuni.edu.vn |
+| 2 | Nguyễn Quang Duy | 26ai.duynq@vinuni.edu.vn |
+| 3 | Bùi Gia Chính | 26ai.chinhbg@vinuni.edu.vn |
+| 4 | Nguyễn Vũ Huy | 26ai.huynv5@vinuni.edu.vn |
+| 5 | Vũ Quốc Bảo | 26ai.baovq3@vinuni.edu.vn |
 # 03 — AI Log & Reflection (Cá nhân)
 
-**Học viên:** Nguyễn Vũ Huy — **MSSV:** 2A202602662 — **Branch:** `2A202602662_NguyenVuHuy`
-**Công cụ AI đã dùng:** Claude (Claude Code trong VS Code) làm thought-partner & pair-programmer; Gemini 2.5 Flash là mô hình được stress-test trong prototype.
+
 
 > Đây là nhật ký của phiên làm việc thực tế: tôi giao cho Claude đọc toàn bộ tài liệu lab (README, worksheet, deliverable example, inspiration kit, autograder) rồi cùng thực hiện các deliverable trên branch cá nhân.
 

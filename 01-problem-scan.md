@@ -1,7 +1,15 @@
 # 01 — Problem Scan & Quick Cards (Cá nhân)
+# Thông tin nhóm
 
-**Học viên:** Nguyễn Vũ Huy — **MSSV:** 2A202602662 — **Branch:** `2A202602662_NguyenVuHuy`
-**Vai trò:** AI Product Engineer @ Vin Smart Future
+**Tên nhóm:** BHCDC
+
+| STT | Họ và tên | Email |
+|---:|---|---|
+| 1 | Lê Phan Việt Cường | 26ai.cuonglpv@vinuni.edu.vn |
+| 2 | Nguyễn Quang Duy | 26ai.duynq@vinuni.edu.vn |
+| 3 | Bùi Gia Chính | 26ai.chinhbg@vinuni.edu.vn |
+| 4 | Nguyễn Vũ Huy | 26ai.huynv5@vinuni.edu.vn |
+| 5 | Vũ Quốc Bảo | 26ai.baovq3@vinuni.edu.vn |
 
 > Lưu ý: Các con số thời gian/chi phí trong file này là **ước tính giả định** để phục vụ scoping, chưa được xác thực bằng dữ liệu vận hành thật của Vingroup.
 
