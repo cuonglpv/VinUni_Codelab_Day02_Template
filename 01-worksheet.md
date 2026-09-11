@@ -63,11 +63,11 @@ Hãy sử dụng **4 Lenses** dưới đây để quét qua hoạt động vận
 ### 📝 List bài toán của tôi:
 | # | Subsidiary (VinFast/Xanh SM...) | Lens | Mô tả ngắn bài toán |
 |---|----------------------------------|------|---------------------|
-| 1 | | | |
-| 2 | | | |
-| 3 | | | |
-| 4 | | | |
-| 5 | | | |
+| 1 | **Vinmec** | Tốn thời gian | Nhân viên tiếp đón phải tra cứu và đối chiếu thủ công quyền lợi bảo hiểm y tế/bảo lãnh viện phí của bệnh nhân qua nhiều công ty bảo hiểm khác nhau, mất 10-15 phút/ca và gây ùn ứ ở quầy tiếp đón giờ cao điểm. |
+| 2 | **VinFast** | Lặp lại | Tổng đài CSKH VinFast mỗi ngày nhận hàng trăm câu hỏi lặp lại giống nhau (cách sạc xe, lịch bảo dưỡng, điều khoản bảo hành), nhân viên phải tự tra tài liệu kỹ thuật để trả lời từng khách. |
+| 3 | **Xanh SM** | Pain từ người khác | Tài xế phàn nàn vì hệ thống gợi ý điểm đón/trả khách không tính đến giờ cao điểm và đường cấm, khiến tài xế phải tự vòng lại nhiều lần. |
+| 4 | **Vinhomes** | AI-upgrade | Tổng đài CSKH cư dân xử lý các yêu cầu bảo trì (điện, nước, thang máy) bằng cách phân loại thủ công rồi chuyển tiếp qua email, phản hồi rập khuôn và chậm (trung bình 12 tiếng mới có kỹ thuật viên xác nhận lịch). |
+| 5 | **VinWonders** | Tốn thời gian | Nhân viên vận hành phải tổng hợp thủ công phản hồi/đánh giá của khách sau mỗi ngày (khảo sát giấy + app) để báo cáo chất lượng dịch vụ, mất 2-3 giờ/ngày và dễ bỏ sót ý kiến tiêu cực cần xử lý gấp. |
 
 ---
 
@@ -77,24 +77,94 @@ Chọn **top 3 bài toán** từ danh sách trên và hoàn thiện **3 Quick Pr
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│ QUICK PROBLEM CARD #___                                     │
-│                                                             │
-│ Bài toán (1 câu): ________________________________________  │
-│ Công ty thành viên: [ ] VinFast  [ ] Xanh SM  [ ] Vinhomes  │
-│                     [ ] Vinmec   [ ] Khác (Ghi rõ)________  │
-│                                                             │
-│ Ai đang đau (Actor)? ______________________________________ │
-│                                                             │
-│ Workflow thủ công hiện tại (3-5 bước):                      │
-│   1. ___ ──> 2. ___ ──> 3. ___ ──> 4. ___                   │
-│                                                             │
-│ Bước nào tốn thời gian/lỗi nhất? ___ (⏱ ___ phút/lượt)      │
-│ AI có thể nhảy vào hỗ trợ ở bước nào? _____________________ │
-│                                                             │
-│ Đo thành công bằng gì (Metric có số)? ______________________ │
-│   VD: "Giảm thời gian soạn phản hồi từ 10 min ──> under 2 min"│
-│                                                             │
-│ Quick Architecture: [ ] No AI  [ ] Rule  [ ] LLM  [ ] Agent │
+│ QUICK PROBLEM CARD #1                                        │
+│                                                               │
+│ Bài toán: Nhân viên tiếp đón Vinmec tra cứu thủ công quyền   │
+│ lợi BHYT/bảo lãnh viện phí của bệnh nhân qua nhiều hãng bảo  │
+│ hiểm khác nhau.                                              │
+│ Công ty thành viên: [x] Vinmec                               │
+│                                                               │
+│ Ai đang đau (Actor)? Nhân viên tiếp đón (thao tác lặp),      │
+│ Bệnh nhân (xếp hàng chờ)                                     │
+│                                                               │
+│ Workflow thủ công hiện tại (4 bước):                         │
+│   1. Nhận thông tin bệnh nhân & thẻ BHYT/bảo hiểm            │
+│   ──> 2. Tra cứu quyền lợi trên từng cổng bảo hiểm riêng lẻ  │
+│   ──> 3. Đối chiếu hạn mức bảo lãnh với dịch vụ khám         │
+│   ──> 4. Nhập kết quả vào hệ thống & xác nhận cho bệnh nhân  │
+│                                                               │
+│ Bước nào tốn thời gian/lỗi nhất? Bước 2 (⏱ 8 phút/lượt)      │
+│ AI có thể nhảy vào hỗ trợ ở bước nào? Bước 2-3 (tự động tra  │
+│ cứu & đối chiếu quyền lợi bảo hiểm)                          │
+│                                                               │
+│ Đo thành công bằng gì (Metric có số)?                        │
+│   Giảm thời gian xác minh bảo hiểm từ 10-15 phút ──> dưới 3 phút│
+│                                                               │
+│ Quick Architecture: [ ] No AI  [ ] Rule  [x] LLM  [ ] Agent  │
+└─────────────────────────────────────────────────────────────┘
+```
+```
+┌─────────────────────────────────────────────────────────────┐
+│ QUICK PROBLEM CARD #2 (revised)                              │
+│                                                               │
+│ Bài toán: Tổng đài CSKH VinFast mất nhiều thời gian trả lời  │
+│ câu hỏi lặp lại về sạc xe, bảo dưỡng (nội dung TĨNH) và      │
+│ bảo hành (cần tra theo VIN/hợp đồng, KHÔNG tĩnh).            │
+│ Công ty thành viên: [x] VinFast                              │
+│                                                               │
+│ Ai đang đau (Actor)? Nhân viên CSKH (quá tải), Khách hàng    │
+│ (chờ phản hồi lâu)                                           │
+│                                                               │
+│ Workflow thủ công hiện tại (4 bước):                         │
+│   1. Khách gọi/nhắn hỏi về sạc xe/bảo dưỡng/bảo hành         │
+│   ──> 2. Nhân viên xác định loại câu hỏi                     │
+│   ──> 3. Tra cứu tài liệu kỹ thuật/FAQ/hệ thống bảo hành     │
+│   ──> 4. Soạn và gửi câu trả lời cho khách (có duyệt)        │
+│                                                               │
+│ Bước nào tốn thời gian/lỗi nhất? Bước 3 (⏱ 5 phút/lượt)      │
+│ AI có thể nhảy vào hỗ trợ ở bước nào?                        │
+│   - Sạc xe/bảo dưỡng: Rule/lookup trả lời trực tiếp (mẫu    │
+│     câu hỏi ổn định, ít rủi ro pháp lý)                      │
+│   - Bảo hành: LLM+RAG map câu hỏi tự nhiên → tra hệ thống    │
+│     VIN/hợp đồng, soạn nháp; NGƯỜI duyệt trước khi gửi       │
+│                                                               │
+│ Đo thành công bằng gì (Metric có số)?                        │
+│   - Thời gian phản hồi: 6 phút ──> dưới 1 phút (nhóm tĩnh)   │
+│   - Độ chính xác: audit thủ công ≥20% số ca/tuần, đối       │
+│     chiếu tài liệu/hệ thống chính thức, sai số cho phép <2%  │
+│   - Tỉ lệ escalation ngược lại người (AI từ chối/trả sai)    │
+│   - Chi phí xử lý lại trên mỗi ca phải escalation lần 2      │
+│                                                               │
+│ Quick Architecture: [ ] No AI  [x] Rule  [x] LLM  [ ] Agent  │
+│   Rule/lookup cho sạc xe & bảo dưỡng; LLM+RAG có kiểm soát   │
+│   + người duyệt cho bảo hành (không auto-send)               │
+└─────────────────────────────────────────────────────────────┘
+```
+```
+┌─────────────────────────────────────────────────────────────┐
+│ QUICK PROBLEM CARD #3                                        │
+│                                                               │
+│ Bài toán: Tài xế Xanh SM phàn nàn vì hệ thống gợi ý điểm     │
+│ đón/trả khách không tính giờ cao điểm và đường cấm.          │
+│ Công ty thành viên: [x] Xanh SM                              │
+│                                                               │
+│ Ai đang đau (Actor)? Tài xế (mất thời gian, tốn nhiên liệu), │
+│ Khách hàng (chờ lâu hơn)                                     │
+│                                                               │
+│ Workflow thủ công hiện tại (4 bước):                         │
+│   1. Hệ thống match tài xế gần nhất theo đường chim bay      │
+│   ──> 2. Tài xế nhận điểm đón được gợi ý                     │
+│   ──> 3. Tài xế tự kiểm tra thực tế có đường cấm/giờ cao điểm│
+│   ──> 4. Tài xế tự tìm đường vòng nếu gợi ý không khả thi    │
+│                                                               │
+│ Bước nào tốn thời gian/lỗi nhất? Bước 3-4 (⏱ 4-6 phút/lượt)  │
+│ AI có thể nhảy vào hỗ trợ ở bước nào? Bước 1 (tính gợi ý điểm│
+│ đón tích hợp dữ liệu giao thông thời gian thực)              │
+│                                                               │
+│ Đo thành công bằng gì (Metric có số)?                        │
+│   Giảm tỉ lệ tài xế phải đi vòng từ 30% xuống dưới 10%       │
+│                                                               │
+│ Quick Architecture: [ ] No AI  [x] Rule  [ ] LLM  [ ] Agent  │
 └─────────────────────────────────────────────────────────────┘
 ```
 
