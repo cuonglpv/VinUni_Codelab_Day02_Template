@@ -63,11 +63,13 @@ Hãy sử dụng **4 Lenses** dưới đây để quét qua hoạt động vận
 ### 📝 List bài toán của tôi:
 | # | Subsidiary (VinFast/Xanh SM...) | Lens | Mô tả ngắn bài toán |
 |---|----------------------------------|------|---------------------|
-| 1 | | | |
-| 2 | | | |
-| 3 | | | |
-| 4 | | | |
-| 5 | | | |
+| **1** | **Xanh SM**               | Repetitive + Stakeholder Pain | **Phân loại nguyên nhân chuyến hủy / không hoàn thành** từ dữ liệu chuyến, ghi chú tài xế, chat/call để biết chính xác vì sao chuyến thất bại. |
+| **2** | **Vinhomes**              | Repetitive + Time-consuming   | **Tự động phân loại và chuyển ticket cư dân**: điện, nước, thang máy, vệ sinh, an ninh, phí dịch vụ… → đúng bộ phận xử lý.                     |
+| **3** | **VinFast**               | Repetitive + Time-consuming   | **Triage lỗi bảo hành/sửa chữa**: đọc mô tả lỗi + error code + lịch sử xe → phân nhóm lỗi và gợi ý hướng kiểm tra ban đầu.                     |
+| **4** | **Vinpearl / VinWonders** | Repetitive + AI-upgrade       | **Tự động xử lý câu hỏi khách hàng** về vé, phòng, voucher, giờ hoạt động, đổi lịch, tiện ích… thay cho CSKH trả lời từng câu giống nhau.      |
+| **5** | **Vinhomes**              | Repetitive + Stakeholder Pain | **Phát hiện bất thường điện/nước**: hệ thống tự phát hiện tòa nhà/khu vực tiêu thụ bất thường để đội vận hành kiểm tra trước khi có khiếu nại. |
+
+
 
 ---
 
@@ -75,33 +77,118 @@ Hãy sử dụng **4 Lenses** dưới đây để quét qua hoạt động vận
 
 Chọn **top 3 bài toán** từ danh sách trên và hoàn thiện **3 Quick Problem Cards** dưới đây (10 phút/card).
 
-```
 ┌─────────────────────────────────────────────────────────────┐
-│ QUICK PROBLEM CARD #___                                     │
-│                                                             │
-│ Bài toán (1 câu): ________________________________________  │
-│ Công ty thành viên: [ ] VinFast  [ ] Xanh SM  [ ] Vinhomes  │
-│                     [ ] Vinmec   [ ] Khác (Ghi rõ)________  │
-│                                                             │
-│ Ai đang đau (Actor)? ______________________________________ │
-│                                                             │
-│ Workflow thủ công hiện tại (3-5 bước):                      │
-│   1. ___ ──> 2. ___ ──> 3. ___ ──> 4. ___                   │
-│                                                             │
-│ Bước nào tốn thời gian/lỗi nhất? ___ (⏱ ___ phút/lượt)      │
-│ AI có thể nhảy vào hỗ trợ ở bước nào? _____________________ │
-│                                                             │
-│ Đo thành công bằng gì (Metric có số)? ______________________ │
-│   VD: "Giảm thời gian soạn phản hồi từ 10 min ──> under 2 min"│
-│                                                             │
-│ Quick Architecture: [ ] No AI  [ ] Rule  [ ] LLM  [ ] Agent │
+│ QUICK PROBLEM CARD #1                          │
+│                                                               │
+│ Bài toán (1 câu):                                            │
+│ Tự động gắn nhãn lý do hủy chuyến từ ghi chú text của        │
+│ tài xế/CS sau mỗi cuộc gọi hủy, theo taxonomy cố định.       │
+│                                                               │
+│ Công ty thành viên: [ ] VinFast  [✓] Xanh SM  [ ] Vinhomes   │
+│                      [ ] Vinmec                              │
+│                                                               │
+│ Ai đang đau (Actor)?                                         │
+│ Customer Operations                                          │
+│                                                               │
+│ Workflow thủ công hiện tại:                                  │
+│ 1. Khách/tài xế hủy chuyến, CS ghi chú lý do bằng text       │
+│    → 2. Ghi chú lưu vào hệ thống                             │
+│    → 3. CS/vận hành đọc và phân loại lý do thủ công          │
+│    → 4. Tổng hợp báo cáo pattern hủy chuyến định kỳ          │
+│                                                               │
+│ Bước nào tốn thời gian/lỗi nhất?                             │
+│ Bước 3: đọc và phân loại ghi chú text không cấu trúc         │
+│ (⏱ giả định 3–5 phút/case, cần validate bằng log)            │
+│                                                               │
+│ AI có thể nhảy vào hỗ trợ ở bước nào?                        │
+│ Bước 3: gắn 1 nhãn lý do hủy (taxonomy cố định 10–15 nhãn)   │
+│ + confidence score cho mỗi ghi chú text đã có sẵn (không     │
+│ xử lý audio call trực tiếp). Confidence thấp → route người.  │
+│                                                               │
+│ Đo thành công bằng gì (Metric có số)?                        │
+│ Accuracy theo từng nhãn ≥85% (đo trên tập test gán tay       │
+│ ≥200 case); giảm thời gian phân loại/case từ 3–5 phút        │
+│ xuống <30 giây (tính từ lúc có ghi chú text).                │
+│                                                               │
+│ Quick Architecture: [ ] No AI [ ] Rule [✓] LLM [ ] Agent     │
+│ (MVP; cân nhắc chuyển sang classifier nhẹ nếu volume đủ lớn) │
 └─────────────────────────────────────────────────────────────┘
-```
-
-> [!TIP]
-> **🤖 AI Prompts — Stress-Test thẻ bài toán:**
-> Hãy dán nội dung thẻ bài toán của bạn vào LLM để nhận phản biện:
-> *"Đây là một thẻ bài toán vận hành tôi đề xuất cho Vin Smart Future: [Dán nội dung]. Hãy đóng vai trò là một CFO và Trưởng phòng Vận hành cực kỳ khắt khe, chỉ ra cho tôi 3 điểm yếu về logic, metric, và giải thích vì sao rule-based code thông thường có thể giải quyết bài toán này tốt hơn là dùng AI."*
+┌─────────────────────────────────────────────────────────────┐
+│ QUICK PROBLEM CARD #2                                       │
+│                                                             │
+│ Bài toán (1 câu):                                           │
+│ Tự động phân loại ticket free-text (hotline/ô mô tả tự do)  │
+│ đến đúng đội kỹ thuật phụ trách, loại trừ ticket đã có      │
+│ category sẵn hoặc liên quan pháp lý/tài chính.              │
+│                                                             │
+│ Công ty thành viên: [ ] VinFast  [ ] Xanh SM  [✓] Vinhomes  │
+│                      [ ] Vinmec                              │
+│                                                              │
+│ Ai đang đau (Actor)?                                         │
+│ Customer Service (owner nhãn) — Đội vận hành/kỹ thuật        │
+│ (bên nhận kết quả)                                           │
+│                                                              │
+│ Workflow thủ công hiện tại:                                  │
+│ 1. Tiếp nhận ticket free-text từ hotline/app                 │
+│    → 2. CS đọc nội dung phản ánh                             │
+│    → 3. CS xác định nhóm vấn đề và đội phụ trách             │
+│    → 4. Chuyển ticket đến đội kỹ thuật tương ứng             │
+│                                                              │
+│ Bước nào tốn thời gian/lỗi nhất?                             │
+│ Bước 3: đọc và phân loại ticket free-text                    │
+│ (⏱ giả định 1–3 phút/ticket, cần validate bằng log)         │
+│                                                              │
+│ AI có thể nhảy vào hỗ trợ ở bước nào?                        │
+│ Bước 3: phân loại ticket vào taxonomy hiện có của BQL +      │
+│ đề xuất đội phụ trách + confidence score. Ticket pháp lý/    │
+│ tài chính hoặc confidence thấp → route thẳng người.          │
+│                                                               │
+│ Đo thành công bằng gì (Metric có số)?                        │
+│ Accuracy theo từng nhóm ≥90% (đo trên tập test gán tay       │
+│ ≥200 ticket); giảm thời gian triage/ticket từ 1–3 phút       │
+│ xuống <10 giây.                                              │
+│                                                               │
+│ Quick Architecture: [ ] No AI [✓] Rule+LLM [ ] Agent         │
+│ (rule-based cho nhóm có từ khóa rõ ràng, VD "cháy nổ",       │
+│ "mất nước"; LLM cho phần còn lại)                            │
+└─────────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────┐
+│ QUICK PROBLEM CARD #3                                       │
+│                                                             │
+│ Bài toán (1 câu):                                            │
+│ Dựa trên mô tả lỗi tự nhiên của khách hàng + error code      │
+│ (nếu có), gợi ý top-3 nhóm lỗi khả dĩ nhất kèm % tin cậy    │
+│ cho Service Advisor        │
+│                                                               │
+│ Công ty thành viên: [✓] VinFast  [ ] Xanh SM  [ ] Vinhomes   │
+│                      [ ] Vinmec                              │
+│                                                               │
+│ Ai đang đau (Actor)?                                         │
+│ Service Advisor tại trung tâm dịch vụ                        │
+│                                                               │
+│ Workflow thủ công hiện tại:                                  │
+│ 1. Tiếp nhận mô tả lỗi từ khách hàng                         │
+│    → 2. Kiểm tra error code (nếu có)                         │
+│    → 3. SA tổng hợp thông tin, xác định nhóm lỗi ban đầu     │
+│    → 4. Chuyển kỹ thuật viên kiểm tra theo nhóm lỗi          │
+│                                                               │
+│ Bước nào tốn thời gian/lỗi nhất?                             │
+│ Bước 3: tổng hợp mô tả lỗi + error code để xác định nhóm     │
+│ lỗi ban đầu (⏱ cần validate bằng log thực tế)                │
+│                                                               │
+│ AI có thể nhảy vào hỗ trợ ở bước nào?                        │
+│ Bước 3: kết hợp mô tả lỗi (free text) + error code, gợi ý    │
+│ top-3 nhóm lỗi khả dĩ nhất kèm % tin cậy. SA xác nhận cuối.  │
+│ Lịch sử sửa chữa xe: chưa đưa vào MVP đầu (thêm sau).        │
+│                                                               │
+│ Đo thành công bằng gì (Metric có số)?                        │
+│ Top-3 hit rate ≥85% (đo trên tập test gán tay ≥150 case);   │
+│ giảm thời gian triage ban đầu của SA ≥30% (hạ từ ≥50% vì    │
+│ đây là công cụ hỗ trợ, không thay bước xác nhận của người). │
+│                                                               │
+│ Quick Architecture: [ ] No AI [ ] Rule [✓] LLM [ ] Agent     │
+│ (dạng suggestion/gợi ý, không tự động hành động)             │
+└─────────────────────────────────────────────────────────────┘
 
 ---
 
