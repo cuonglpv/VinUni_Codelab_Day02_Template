@@ -63,11 +63,11 @@ Hãy sử dụng **4 Lenses** dưới đây để quét qua hoạt động vận
 ### 📝 List bài toán của tôi:
 | # | Subsidiary (VinFast/Xanh SM...) | Lens | Mô tả ngắn bài toán |
 |---|----------------------------------|------|---------------------|
-| 1 | | | |
-| 2 | | | |
-| 3 | | | |
-| 4 | | | |
-| 5 | | | |
+| 1 | Vinhomes | Lặp lại | Phân loại & điều hướng phản ánh cư dân (mất nước, hỏng đèn, ồn ào) đến đúng ban quản lý | 
+| 2 | VinFast | AI có thể tốt hơn | Chẩn đoán lỗi xe từ mô tả tiếng Việt của khách (vd: "xe kêu cụp cụp ở bánh trước") |
+| 3 | Vinmec | Tốn thời gian | Soạn thảo tóm tắt hồ sơ xuất viện (Discharge Summary) từ bệnh án điện tử |
+| 4 | Vinpearl | Pain từ người khác | Tổng hợp & lọc review khẩn cấp (phòng bẩn, thái độ nhân viên tệ) từ Booking/Agoda/Google Map gửi Manager |
+| 5 | VinFast | Lặp lại | Đối chiếu hóa đơn sạc điện đối tác hằng tuần |
 
 ---
 
@@ -77,24 +77,107 @@ Chọn **top 3 bài toán** từ danh sách trên và hoàn thiện **3 Quick Pr
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│ QUICK PROBLEM CARD #___                                     │
-│                                                             │
-│ Bài toán (1 câu): ________________________________________  │
-│ Công ty thành viên: [ ] VinFast  [ ] Xanh SM  [ ] Vinhomes  │
-│                     [ ] Vinmec   [ ] Khác (Ghi rõ)________  │
-│                                                             │
-│ Ai đang đau (Actor)? ______________________________________ │
-│                                                             │
-│ Workflow thủ công hiện tại (3-5 bước):                      │
-│   1. ___ ──> 2. ___ ──> 3. ___ ──> 4. ___                   │
-│                                                             │
-│ Bước nào tốn thời gian/lỗi nhất? ___ (⏱ ___ phút/lượt)      │
-│ AI có thể nhảy vào hỗ trợ ở bước nào? _____________________ │
-│                                                             │
-│ Đo thành công bằng gì (Metric có số)? ______________________ │
-│   VD: "Giảm thời gian soạn phản hồi từ 10 min ──> under 2 min"│
-│                                                             │
-│ Quick Architecture: [ ] No AI  [ ] Rule  [ ] LLM  [ ] Agent │
+│ QUICK PROBLEM CARD #1                                        │
+│                                                                │
+│ Bài toán: Phân loại tự động phản ánh cư dân (mất nước, hỏng   │
+│ đèn, ồn ào…) gửi qua App Vinhomes Resident, route đúng ban    │
+│ quản lý tòa nhà phụ trách.                                    │
+│ Công ty thành viên: [x] Vinhomes                              │
+│                                                                │
+│ Ai đang đau? Nhân viên CSKH (đọc & phân loại thủ công hàng    │
+│ nghìn ticket/ngày across nhiều dự án), cư dân (chờ lâu vì     │
+│ ticket bị route sai ban quản lý)                              │
+│                                                                │
+│ Workflow thủ công hiện tại (4 bước):                          │
+│   1. Cư dân gửi phản ánh qua App (text tự do)                 │
+│   → 2. Nhân viên CSKH đọc, phân loại thủ công theo hạng mục   │
+│   → 3. Tra cứu tòa nhà/ban quản lý phụ trách                  │
+│   → 4. Forward ticket cho đúng ban quản lý xử lý              │
+│                                                                │
+│ Bước nào tốn nhất? Bước 2 (⏱ ~5 phút/ticket, dễ phân loại sai)│
+│ AI hỗ trợ ở bước nào? Bước 2–3 (đọc text → gán category +     │
+│ tòa nhà tự động)                                               │
+│                                                                │
+│ Metric: Giảm thời gian từ lúc gửi đến lúc route đúng ban      │
+│ quản lý từ ~30 phút xuống dưới 5 phút; độ chính xác phân      │
+│ loại ≥ 90%.                                                    │
+│                                                                │
+│ Quick Architecture: [x] LLM Feature                            │
+│                                                                │
+│ Vì sao cấp thiết: Tần suất cao nhất trong 5 bài toán — sai    │
+│ lệch tích lũy hằng ngày across toàn bộ dự án Vinhomes, ảnh    │
+│ hưởng trực tiếp đến trải nghiệm sống, chỉ số uy tín cốt lõi   │
+│ của tập đoàn bất động sản.                                     │
+└─────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────┐
+│ QUICK PROBLEM CARD #2                                        │
+│                                                                │
+│ Bài toán: Trích xuất thông tin lâm sàng từ bệnh án điện tử,    │
+│ xét nghiệm, ghi chú bác sĩ để soạn bản tóm tắt xuất viện       │
+│ (Discharge Summary) bằng ngôn ngữ dễ hiểu cho bệnh nhân.       │
+│ Công ty thành viên: [x] Vinmec                                 │
+│                                                                │
+│ Ai đang đau? Bác sĩ (mất thời gian hành chính lẽ ra dành cho  │
+│ khám bệnh nhân mới, gây quá tải dây chuyền toàn hệ thống)      │
+│                                                                │
+│ Workflow thủ công hiện tại (4 bước):                          │
+│   1. Bác sĩ tổng hợp dữ liệu từ bệnh án điện tử, xét nghiệm    │
+│   → 2. Bác sĩ tự viết tóm tắt xuất viện bằng tay               │
+│   → 3. Rà soát lại thông tin thuốc, dặn dò tái khám            │
+│   → 4. In/gửi bản tóm tắt cho bệnh nhân                        │
+│                                                                │
+│ Bước nào tốn nhất? Bước 1–2 (⏱ 20–30 phút/bệnh nhân)           │
+│ AI hỗ trợ ở bước nào? Bước 1–2 — AI chỉ draft, bác sĩ bắt buộc │
+│ duyệt 100% trước khi gửi (không rút gọn bước duyệt để đảm     │
+│ bảo an toàn)                                                    │
+│                                                                │
+│ Metric: Giảm thời gian soạn thảo (không tính thời gian đọc-   │
+│ duyệt) từ ~25 phút xuống dưới 8 phút/bệnh nhân.                │
+│                                                                │
+│ Quick Architecture: [x] LLM Feature (hybrid: phần hành chính  │
+│ có thể rule/template, phần tóm tắt lâm sàng dùng LLM draft)    │
+│                                                                │
+│ Vì sao cấp thiết: Tác động dây chuyền lớn nhất — thời gian     │
+│ bác sĩ mất vào giấy tờ là thời gian bị lấy đi khỏi khám chữa   │
+│ bệnh nhân tiếp theo, trong bối cảnh hệ thống y tế luôn quá tải.│
+│ Rủi ro cao chính là lý do cần scoping đúng ngay từ đầu, không  │
+│ phải lý do trì hoãn.                                           │
+└─────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────┐
+│ QUICK PROBLEM CARD #3                                        │
+│                                                                │
+│ Bài toán: So khớp dữ liệu sạc điện hằng tuần từ hàng nghìn     │
+│ trụ sạc liên kết ngoài với hóa đơn thực tế gửi về hệ thống     │
+│ tài chính.                                                      │
+│ Công ty thành viên: [x] VinFast                                │
+│                                                                │
+│ Ai đang đau? Nhân viên tài chính/kế toán (đối chiếu thủ công), │
+│ đối tác trạm sạc (rủi ro thanh toán nhầm/thiếu)                │
+│                                                                │
+│ Workflow thủ công hiện tại (4 bước):                          │
+│   1. Tải dữ liệu sạc điện hằng tuần từ hàng nghìn trụ sạc      │
+│   → 2. Nhân viên tài chính đối chiếu thủ công với hóa đơn      │
+│   → 3. Ghi chú các trường hợp lệch số liệu cần xác minh         │
+│   → 4. Gửi báo cáo chênh lệch cho đối tác xử lý                │
+│                                                                │
+│ Bước nào tốn nhất? Bước 2 (⏱ tốn nhiều giờ/tuần, dễ bỏ sót do  │
+│ khối lượng dữ liệu lớn)                                        │
+│ AI hỗ trợ ở bước nào? Bước 2–3 (tự động so khớp, phần đối      │
+│ chiếu ghi chú ngôn ngữ tự nhiên dùng LLM; phần số liệu thuần   │
+│ dùng rule-based)                                               │
+│                                                                │
+│ Metric: Giảm thời gian đối chiếu hằng tuần từ X giờ xuống      │
+│ dưới Y giờ; phát hiện ≥ 95% các trường hợp lệch số liệu.       │
+│                                                                │
+│ Quick Architecture: [x] LLM Feature kết hợp Rule-based cho     │
+│ phần số liệu có cấu trúc                                        │
+│                                                                │
+│ Vì sao cấp thiết: Duy nhất trong 3 case có tác động tài chính  │
+│ đo bằng tiền, không chỉ giờ công — sai lệch âm thầm tích lũy   │
+│ hằng tuần là rủi ro nguy hiểm vì khó phát hiện sớm, đến khi    │
+│ phát hiện thường đã thành khoản chênh lệch lớn khó truy vết.   │
 └─────────────────────────────────────────────────────────────┘
 ```
 
